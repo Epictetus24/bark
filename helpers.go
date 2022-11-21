@@ -2,8 +2,9 @@ package bark
 
 import (
 	"crypto/tls"
+	"math/rand"
 	"net/http"
-	"reflect"
+	"time"
 
 	"github.com/lucas-clemente/quic-go/http3"
 )
@@ -11,6 +12,19 @@ import (
 var (
 	dontverify = tls.Config{InsecureSkipVerify: true}
 )
+
+func Jitter(d time.Duration, j float64) time.Duration {
+	if j < 0.0 {
+		return d
+	}
+
+	r := rand.Float64() * float64(d)
+	if j > 0.0 && j < 1.0 {
+		r = float64(j)*r + float64(1.0-j)*float64(d)
+	}
+
+	return time.Duration(r)
+}
 
 // Create a new Barker with HTTP Defaults
 func NewBarkerHTTP(name string, verifytls bool) *BarkConfig {
@@ -26,7 +40,7 @@ func NewBarkerHTTP(name string, verifytls bool) *BarkConfig {
 		}
 
 	}
-	Barkers[name] = httpconf
+
 	return httpconf
 }
 
@@ -41,47 +55,13 @@ func NewBarkerQUIC(name string, verifytls bool) *BarkConfig {
 		}
 
 	}
-	Barkers[name] = httpconf
+
 	return httpconf
 }
 
 // Create a new barker with no settings
 func NewBarker(name string) *BarkConfig {
 	httpconf := &BarkConfig{}
-	Barkers[name] = httpconf
+
 	return httpconf
-}
-
-// UpdateBarker updates the barker's comms config with the provided BarkConfig
-func UpdateBarkers(barkername string, httpconf *BarkConfig) {
-	Barkers[barkername] = httpconf
-}
-
-// Delete an existing Barker
-func DeleteBarker(name string) {
-	delete(Barkers, name)
-}
-
-func ListBarkersName() []string {
-	keys := []string{}
-	value := reflect.ValueOf(Barkers)
-	if value.Kind() == reflect.Map {
-		for _, v := range value.MapKeys() {
-			if v.Kind() == reflect.String {
-				keys = append(keys, v.String())
-			}
-		}
-	}
-	return keys
-
-}
-
-func ListAllBarkers() []Barker {
-	var allbarkers []Barker
-	for _, v := range Barkers {
-		allbarkers = append(allbarkers, v)
-
-	}
-	return allbarkers
-
 }

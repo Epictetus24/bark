@@ -6,7 +6,6 @@ require (
 	github.com/fatih/color v1.13.0
 	github.com/go-chi/chi v1.5.4
 	github.com/lucas-clemente/quic-go v0.31.0
-	github.com/salukikit/go-util v0.0.0-20221115205539-2fe90cb2125c
 )
 
 require (

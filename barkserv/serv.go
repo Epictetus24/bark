@@ -1,4 +1,4 @@
-package serv
+package barkserv
 
 import (
 	"net/http"

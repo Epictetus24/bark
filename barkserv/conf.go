@@ -1,4 +1,4 @@
-package serv
+package barkserv
 
 import "net/http"
 
@@ -12,7 +12,6 @@ type ListenerConf struct {
 	Regfunc  http.HandlerFunc
 
 	//general settings
-	Proto    int
 	Certpub  string
 	Certkey  string
 	Verbose  bool

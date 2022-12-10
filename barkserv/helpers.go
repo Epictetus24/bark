@@ -23,11 +23,12 @@ func NewBarkServHTTPS(tlscert, tlskey string, rconf RouterConf) *HTTPSConf {
 }
 
 // Create a new BarkServ router config with specified URIs. Handler funcs must be specified.
-func NewBarkRouter(reguris, taskuris, outputuris []string, authconf *AuthConf) *RouterConf {
+func NewBarkRouter(reguris, taskuris, outputuris []string) *RouterConf {
 	rconf := &RouterConf{
 		Reguris:  reguris,
 		Taskuris: taskuris,
 		Outuris:  outputuris,
+		
 	}
 
 	return rconf
@@ -43,52 +44,4 @@ func NewBarkServQUIC(tlscert, tlskey string, rconf RouterConf) *QUICConf {
 
 	//BarkServers[name] = quicconf
 	return quicconf
-}
-
-func NewAuthConfig(secret, name string) *AuthConf {
-	authconf := &AuthConf{}
-	authconf.Secret = secret
-	authconf.Name = name
-	authconf.TokenAuth = newJWTAuth(authconf.Secret)
-
-	return authconf
-
-}
-
-func GetBarkJWTCookie(r *http.Request, cookiename string) string {
-	cookie, err := r.Cookie(cookiename)
-	if err != nil {
-		return ""
-	}
-	return cookie.Value
-}
-
-func (ac *AuthConf) NewBarkCookie(domain, cookiename, id, value string, secure, httponly bool) http.Cookie {
-	barktoken := newBarkJWT(id, value, *ac.TokenAuth)
-	barkcookie := http.Cookie{
-		Name:  cookiename,
-		Value: barktoken,
-
-		Domain:   domain,
-		HttpOnly: httponly,
-		Secure:   secure,
-	}
-
-	return barkcookie
-
-}
-
-func (ac *AuthConf) NewBarkHeader(cookiename, id, value string) http.Cookie {
-	barktoken := newBarkJWT(id, value, *ac.TokenAuth)
-	barkcookie := http.Cookie{
-		Name:  cookiename,
-		Value: barktoken,
-
-		Domain:   domain,
-		HttpOnly: httponly,
-		Secure:   secure,
-	}
-
-	return barkcookie
-
 }

@@ -5,7 +5,6 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/jwtauth/v5"
 	"github.com/lucas-clemente/quic-go/http3"
 )
 
@@ -25,10 +24,8 @@ func (qc *QUICConf) StartListener(address string, verbose bool) *http3.Server {
 	qc.Xi.Use(middleware.RequestID)
 	qc.Xi.Use(middleware.RealIP)
 	qc.Xi.Use(middleware.Recoverer)
-	qc.Xi.Use(middleware.Recoverer)
-	qc.Xi.Use(jwtauth.Verifier(qc.Routes.AuthConf.TokenAuth))
 
-	newRoutes(qc.Xi, qc.Routes, qc.Routes.AuthConf)
+	newRoutes(qc.Xi, qc.Routes)
 
 	server := &http3.Server{
 		Addr:    address,

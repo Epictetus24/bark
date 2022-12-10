@@ -9,7 +9,6 @@ import (
 	"github.com/fatih/color"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/jwtauth/v5"
 )
 
 type HTTPSConf struct {
@@ -28,16 +27,14 @@ type HTTPConf struct {
 func (hc *HTTPConf) StartListener(address string, verbose bool) *http.Server {
 
 	hc.Xi = chi.NewRouter()
-	if verbose {
-		hc.Xi.Use(middleware.Logger)
-	}
 	hc.Xi.Use(middleware.RequestID)
 	hc.Xi.Use(middleware.RealIP)
+	if verbose == true {
+		hc.Xi.Use(middleware.Logger)
+	}
 	hc.Xi.Use(middleware.Recoverer)
 
-	hc.Xi.Use(jwtauth.Verifier(hc.Routes.AuthConf.TokenAuth))
-
-	newRoutes(hc.Xi, hc.Routes, hc.Routes.AuthConf)
+	newRoutes(hc.Xi, hc.Routes)
 
 	color.Green("Starting HTTP Implant Server listening on %s\n", address)
 
@@ -60,16 +57,14 @@ func (hc *HTTPConf) StartListener(address string, verbose bool) *http.Server {
 
 func (hcs *HTTPSConf) StartListener(address string, verbose bool) *http.Server {
 	hcs.Xi = chi.NewRouter()
-	if verbose {
-		hcs.Xi.Use(middleware.Logger)
-	}
 	hcs.Xi.Use(middleware.RequestID)
 	hcs.Xi.Use(middleware.RealIP)
+	if verbose == true {
+		hcs.Xi.Use(middleware.Logger)
+	}
 	hcs.Xi.Use(middleware.Recoverer)
 
-	hcs.Xi.Use(jwtauth.Verifier(hcs.Routes.AuthConf.TokenAuth))
-
-	newRoutes(hcs.Xi, hcs.Routes, hcs.Routes.AuthConf)
+	newRoutes(hcs.Xi, hcs.Routes)
 
 	color.Green("Starting HTTPS Implant Server listening on %s\n", address)
 

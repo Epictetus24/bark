@@ -22,8 +22,8 @@ type BarkConfig struct {
 
 	//transport
 	Jit float64
-	tr  http.RoundTripper
+	Tr  http.RoundTripper
 
 	//cookies:
-	jar http.CookieJar
+	Jar http.CookieJar
 }

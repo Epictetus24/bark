@@ -30,11 +30,11 @@ func Jitter(d time.Duration, j float64) time.Duration {
 func NewBarkerHTTP(name string, verifytls bool) *BarkConfig {
 	httpconf := &BarkConfig{}
 	if verifytls {
-		httpconf.tr = &http.Transport{
+		httpconf.Tr = &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
 		}
 	} else {
-		httpconf.tr = &http.Transport{
+		httpconf.Tr = &http.Transport{
 			TLSClientConfig: &dontverify,
 			Proxy:           http.ProxyFromEnvironment,
 		}
@@ -48,9 +48,9 @@ func NewBarkerHTTP(name string, verifytls bool) *BarkConfig {
 func NewBarkerQUIC(name string, verifytls bool) *BarkConfig {
 	httpconf := &BarkConfig{}
 	if verifytls {
-		httpconf.tr = &http3.RoundTripper{}
+		httpconf.Tr = &http3.RoundTripper{}
 	} else {
-		httpconf.tr = &http3.RoundTripper{
+		httpconf.Tr = &http3.RoundTripper{
 			TLSClientConfig: &dontverify,
 		}
 

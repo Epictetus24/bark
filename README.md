@@ -38,9 +38,7 @@ Send a beacon (GET request) out to your desired endpoints.
 3. Post Output [optional]:
 If a cmd needs to return output, these endpoints can be sent post requests with the relevant data. 
 
-
-
-Each of the responses to these return the request body as a `[]byte` so that you can send any "byte-able" format and interpret the response however you please.
+Each of the responses to these return the request body as a `[]byte` so that you can send any "byte-able" format and interpret the response however you please. They also store the request cookies. Headers and other HTTP data is not accessible to keep things simple.
 
 For example, you might use `encoding/gob` to unmarshall the data into a go-readable struct, or simply use an entirely custom format. For example there is no reason you couldn't send an encrypted file, a totally custom binary format or even just a simple string. Anything goes so long as you can safely convert it to and from a byte slice.
 
@@ -48,7 +46,8 @@ Currently it only supports HTTP(s)/QUIC.
 
 WIP additions:
 
-* TLS Inspection Checker
-* Multiple URL Helper function
+* TLS Inspection Checker.
+* Simple Proxy Support.
+* Multiple URL Helper function.
 * Add unit testing.
-* Custom comms profiles.
+* Custom yaml HTTP profiles.

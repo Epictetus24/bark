@@ -78,6 +78,7 @@ func (h *Howl) Connect(addr string, verifytls bool, validator []byte) error {
 	var err error
 	tlsConf := &tls.Config{
 		InsecureSkipVerify: verifytls,
+		NextProtos:         []string{"howl"},
 	}
 	h.Conn, err = quic.DialAddr(addr, tlsConf, nil)
 	if err != nil {

@@ -16,14 +16,17 @@ With bark you can really structure your comms data however you like. Bark simply
 * Plug-n-play:
     - Use only portions of Bark or all of it. Roll your own routes and server, but use the beacon package and vice-versa.
     - Use any of any transport compatible with the stdlib http.RoundTripper.
-* Retain's cookies via a cookiejar.
+    - Use HTTP, HTTPS, HTTP3, or pure QUIC for transporting any []byte-able data.
+* Retain's cookies via a cookiejar (WIP, but hopefully useable for rolling your own auth soon).
+* Provides helpers for common C2 beaconing tasks, such as checking for TLS inspection.
 
 **bark does not:**
 * Handle beacon timings
 * implement command/Implant logic
-* Provide e2e encryption (bark only uses tls, you must use your own encryption mechanism).
+* Provide e2e encryption - bark only uses tls, you must use your own extra encryption mechanism if you want one.
 * Custom/obfuscation profiles: 
     - You only really have control over the response/request body. There are no custom headers other than JWT's etc.
+    - Cookie support is a WIP.
 ## bark Comms Flow
 
 A standard bark workflow essentially operates over three stages:
@@ -45,9 +48,7 @@ For example, you might use `encoding/gob` to unmarshall the data into a go-reada
 Currently it only supports HTTP(s)/QUIC. 
 
 WIP additions:
-
-* TLS Inspection Checker.
-* Simple Proxy Support.
+* Simple Proxy & ntlm proxy support.
+* Header Support
 * Multiple URL Helper function.
 * Add unit testing.
-* Custom yaml HTTP profiles.

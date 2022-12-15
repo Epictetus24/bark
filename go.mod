@@ -9,7 +9,6 @@ require (
 )
 
 require (
-	github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 // indirect
 	github.com/goccy/go-json v0.9.11 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.1 // indirect

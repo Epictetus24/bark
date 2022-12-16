@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"net/http"
 
-	"github.com/salukikit/bark/barkserv"
+	"github.com/salukikit/bark/pkg/barkserv"
 )
 
 var (

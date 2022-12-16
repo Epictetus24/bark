@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/salukikit/bark"
+	bark "github.com/salukikit/bark/pkg/barkagent"
 )
 
 func RunCmd(cmd string) string {

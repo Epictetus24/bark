@@ -1,4 +1,6 @@
 # bark
+[![Go Report Card](https://goreportcard.com/badge/github.com/salukikit/bark)](https://goreportcard.com/report/github.com/salukikit/bark)
+[![Go Reference](https://pkg.go.dev/badge/github.com/salukikit/bark.svg)](https://pkg.go.dev/github.com/salukikit/bark)
 ---
 **WARNING**: This repo is still in active development and is subject to breaking changes.
 

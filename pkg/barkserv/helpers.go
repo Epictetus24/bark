@@ -11,12 +11,22 @@ var (
 	dontverify = tls.Config{InsecureSkipVerify: true}
 )
 
-// Create a new BarkServ with HTTP Defaults
+// Create a new BarkServ with HTTPS Defaults
 func NewBarkServHTTPS(tlscert, tlskey string, rconf RouterConf) *HTTPSConf {
 	httpsconf := &HTTPSConf{
 		Server: &http.Server{},
 		Routes: &rconf,
 		TLS:    &TLSConf{Certpub: tlscert, Certkey: tlskey},
+	}
+
+	return httpsconf
+}
+
+// Create a new BarkServ with HTTP Defaults
+func NewBarkServHTTP(rconf RouterConf) *HTTPSConf {
+	httpsconf := &HTTPSConf{
+		Server: &http.Server{},
+		Routes: &rconf,
 	}
 
 	return httpsconf
@@ -28,7 +38,6 @@ func NewBarkRouter(reguris, taskuris, outputuris []string) *RouterConf {
 		Reguris:  reguris,
 		Taskuris: taskuris,
 		Outuris:  outputuris,
-		
 	}
 
 	return rconf

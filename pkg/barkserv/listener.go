@@ -10,7 +10,7 @@ import (
 	"github.com/lucas-clemente/quic-go/http3"
 )
 
-type Listen struct {
+type Server struct {
 	Server     *http.Server
 	Routes     *RouterConf
 	TLS        *TLSConf
@@ -19,7 +19,7 @@ type Listen struct {
 	Quic       bool
 }
 
-func (l *Listen) StartListener(address string, verbose bool) {
+func (l *Server) StartListener(address string, verbose bool) {
 
 	l.Xi = chi.NewRouter()
 	if verbose {
@@ -78,7 +78,7 @@ func (l *Listen) StartListener(address string, verbose bool) {
 }
 
 // Stop listeners
-func (l *Listen) StopListener() {
+func (l *Server) StopListener() {
 
 	if l.Quic == true {
 		l.QuicServer.Close()

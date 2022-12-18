@@ -12,23 +12,21 @@ var (
 )
 
 // Create a new BarkServ with HTTPS Defaults
-func NewBarkServHTTPS(tlscert, tlskey string, rconf RouterConf) *Listen {
-	httpsconf := &Listen{
+func NewBarkServHTTPS(tlscert, tlskey string, rconf RouterConf) *Server {
+	httpsconf := &Server{
 		Server: &http.Server{},
 		Routes: &rconf,
 		TLS:    &TLSConf{Certpub: tlscert, Certkey: tlskey},
 	}
-
 	return httpsconf
 }
 
 // Create a new BarkServ with HTTP Defaults
-func NewBarkServHTTP(rconf RouterConf) *Listen {
-	httpconf := &Listen{
+func NewBarkServHTTP(rconf RouterConf) *Server {
+	httpconf := &Server{
 		Server: &http.Server{},
 		Routes: &rconf,
 	}
-
 	return httpconf
 }
 
@@ -44,14 +42,13 @@ func NewBarkRouter(reguris, taskuris, outputuris []string) *RouterConf {
 }
 
 // Create a new BarkServ with QUIC defaults
-func NewBarkServQUIC(tlscert, tlskey string, rconf RouterConf) *Listen {
-	quicconf := &Listen{
+func NewBarkServQUIC(tlscert, tlskey string, rconf RouterConf) *Server {
+	quicconf := &Server{
 		QuicServer: &http3.Server{},
 		Routes:     &rconf,
 		TLS:        &TLSConf{Certpub: tlscert, Certkey: tlskey},
 		Quic:       true,
 	}
-
 	//BarkServers[name] = quicconf
 	return quicconf
 }

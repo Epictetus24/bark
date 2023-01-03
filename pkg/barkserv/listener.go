@@ -1,7 +1,6 @@
 package barkserv
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/fatih/color"
@@ -46,7 +45,7 @@ func (l *Server) StartListener(address string, verbose bool) {
 			err := server.ListenAndServeTLS(l.TLS.Certpub, l.TLS.Certkey)
 			if err != nil {
 				color.Red("[barkserv] Error listening on %s\n", address)
-				log.Fatal(err)
+				return
 			}
 		}()
 		color.Green("[barkserv] Starting HTTP3(QUIC) Implant Server listening on %s\n", address)
@@ -59,7 +58,7 @@ func (l *Server) StartListener(address string, verbose bool) {
 			err := httpserver.ListenAndServeTLS(l.TLS.Certpub, l.TLS.Certkey)
 			if err != nil {
 				color.Red("[barkserv] Error listening on %s\n", address)
-				log.Fatal(err)
+				return
 			}
 		}()
 		color.Green("[barkserv] Starting HTTPS Implant Server listening on %s\n", address)
@@ -69,7 +68,7 @@ func (l *Server) StartListener(address string, verbose bool) {
 			err := httpserver.ListenAndServe()
 			if err != nil {
 				color.Red("[barkserv] Error listening on %s\n", address)
-				log.Fatal(err)
+				return
 			}
 		}()
 		color.Green("[barkserv] Starting HTTP Implant Server listening on %s\n", address)

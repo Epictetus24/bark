@@ -1,6 +1,7 @@
 package bark
 
 import (
+	"bytes"
 	"io"
 	"net/http"
 )
@@ -41,9 +42,16 @@ type BarkMsg struct {
 
 // Beacon out for cmd
 func (barkerconf *BarkConfig) Bark(Msg BarkMsg) ([]byte, error) {
+	var buf *bytes.Buffer
+
+	if Msg.Body != nil {
+		buf = bytes.NewBuffer(Msg.Body)
+	} else {
+		buf = nil
+	}
 
 	//Create new request
-	request, err := http.NewRequest(Msg.Method, barkerconf.Addr+Msg.Uri, nil)
+	request, err := http.NewRequest(Msg.Method, barkerconf.Addr+Msg.Uri, buf)
 	if err != nil {
 		return nil, err
 	}

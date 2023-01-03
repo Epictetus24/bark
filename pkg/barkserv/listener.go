@@ -60,11 +60,11 @@ func (l *Server) StartListener(address string) {
 		go func() {
 			err := server.ListenAndServeTLS(l.TLS.Certpub, l.TLS.Certkey)
 			if err != nil {
-				BarkLogger.Printf("[barkserv] Error listening on %s\n", address)
+				BarkLogger.Printf("Error listening on %s\n", address)
 				return
 			}
 		}()
-		BarkLogger.Printf("[barkserv] Starting HTTP3(QUIC) Implant Server listening on %s\n", address)
+		BarkLogger.Printf("Starting HTTP3(QUIC) Implant Server listening on %s\n", address)
 
 		l.QuicServer = server
 
@@ -73,21 +73,21 @@ func (l *Server) StartListener(address string) {
 		go func() {
 			err := httpserver.ListenAndServeTLS(l.TLS.Certpub, l.TLS.Certkey)
 			if err != nil {
-				BarkLogger.Printf("[barkserv] Error listening on %s\n", address)
+				BarkLogger.Printf("Error listening on %s\n", address)
 				return
 			}
 		}()
-		BarkLogger.Printf("[barkserv] Starting HTTPS Implant Server listening on %s\n", address)
+		BarkLogger.Printf("Starting HTTPS Implant Server listening on %s\n", address)
 
 	} else {
 		go func() {
 			err := httpserver.ListenAndServe()
 			if err != nil {
-				BarkLogger.Printf("[barkserv] Error listening on %s\n", address)
+				BarkLogger.Printf("Error listening on %s\n", address)
 				return
 			}
 		}()
-		BarkLogger.Printf("[barkserv] Starting HTTP Implant Server listening on %s\n", address)
+		BarkLogger.Printf("Starting HTTP Implant Server listening on %s\n", address)
 	}
 
 }

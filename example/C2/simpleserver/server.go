@@ -48,7 +48,7 @@ func main() {
 
 	barkhttpserver := barkserv.NewBarkServHTTPS("example.crt", "example.key", myrouter)
 
-	barkhttpserver.StartListener("127.0.0.1:8080", true)
+	barkhttpserver.StartListener("127.0.0.1:8080")
 
 	x := true
 

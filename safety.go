@@ -2,7 +2,10 @@ package bark
 
 import (
 	"crypto/tls"
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
+	"time"
 )
 
 // GetTLSCertIssuer returns the issuer of the TLS certificate
@@ -27,4 +30,26 @@ func GetTLSCertIssuer(addr string, tcp bool) (string, error) {
 
 	// Return the issuer of the TLS certificate
 	return certs[0].Issuer.String(), nil
+}
+
+type AuthToken struct {
+	AccessToken string `json:"access_token"`
+	TokenType   string `json:"token_type"`
+	Expires     string `json:"expires_at"`
+}
+
+func BuryinJwt(data []byte) (string, error) {
+	var auth AuthToken
+	fakeexpiry := time.Now().Add(time.Minute * 10)
+	auth.AccessToken = base64.StdEncoding.EncodeToString(data)
+	auth.TokenType = "bearer"
+	auth.Expires = fakeexpiry.String()
+
+	b, err := json.MarshalIndent(auth, "", "  ")
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+
+	return string(b), nil
 }

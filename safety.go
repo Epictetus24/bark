@@ -45,11 +45,11 @@ func BuryinJwt(data []byte) (string, error) {
 	auth.TokenType = "bearer"
 	auth.Expires = fakeexpiry.String()
 
-	b, err := json.MarshalIndent(auth, "", "  ")
+	b, err := json.Marshal(auth)
 	if err != nil {
 		fmt.Println(err)
 		return "", err
 	}
 
-	return string(b), nil
+	return base64.StdEncoding.EncodeToString(b), nil
 }

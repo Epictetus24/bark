@@ -2,9 +2,14 @@ package barkserv
 
 import (
 	"crypto/tls"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/lucas-clemente/quic-go/http3"
+	"github.com/salukikit/bark"
 )
 
 var (
@@ -50,4 +55,31 @@ func NewBarkServQUIC(tlscert, tlskey string, rconf RouterConf) Server {
 		TLS:        &TLSConf{Certpub: tlscert, Certkey: tlskey},
 		Quic:       true,
 	}
+}
+
+// Strips the fakestuff off the Auth header JWT.
+// Pass the authheader data from a barkmessage and get back the encrypted access token as []byte.
+func DataFromFakeJwt(authHead string) ([]byte, error) {
+	var fakeauth *bark.AuthToken
+	if authHead == "" {
+		return nil, fmt.Errorf("Empty string, no auth header")
+	}
+
+	fakestr := strings.ReplaceAll(authHead, "Bearer ", "")
+	fakedat, err := base64.StdEncoding.DecodeString(fakestr)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(fakedat, fakeauth)
+	if err != nil {
+		return nil, err
+	}
+	encdat, err := base64.StdEncoding.DecodeString(fakeauth.AccessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return encdat, nil
+
 }

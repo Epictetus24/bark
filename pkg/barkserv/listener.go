@@ -44,7 +44,7 @@ func (l *Server) StartListener(address string) {
 	l.Xi.Use(middleware.Logger)
 	l.Xi.Use(middleware.Recoverer)
 
-	newRoutes(l.Xi, l.Routes)
+	NewRoutes(l.Xi, l.Routes)
 
 	httpserver := &http.Server{
 		Addr:    address,

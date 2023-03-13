@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/salukikit/bark"
+	"github.com/epictetus24/bark"
 )
 
 func RunCmd(cmd string) string {

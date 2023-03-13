@@ -1,13 +1,12 @@
-module github.com/salukikit/bark
+module github.com/epictetus24/bark
 
 go 1.19
 
 require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/lucas-clemente/quic-go v0.31.0
+	github.com/salukikit/bark v0.0.0-20230104184128-1050bb257e44
 )
-
-require github.com/stretchr/testify v1.8.0 // indirect
 
 require (
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect

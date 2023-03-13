@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/epictetus24/bark"
 	"github.com/lucas-clemente/quic-go/http3"
-	"github.com/salukikit/bark"
 )
 
 var (

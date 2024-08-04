@@ -1,4 +1,4 @@
-module github.com/epictetus24/bark
+module github.com/kopp0ut/bark
 
 go 1.19
 
